@@ -7,7 +7,7 @@ public class JdbcUtils {
 
     private final String url="jdbc:mysql://localhost:3306/parking";
     private final String username="root";
-    private final String password="1234@modi";
+    private final String password="root";
 
     public Connection establishConnection()
     {
