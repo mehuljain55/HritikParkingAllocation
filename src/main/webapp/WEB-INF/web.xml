@@ -4,16 +4,6 @@
              http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-  <!-- Define the ViewResolverServlet -->
-  <servlet>
-    <servlet-name>ViewResolverServlet</servlet-name>
-    <servlet-class>com.ParkingAllocation.Controller.ViewResolverServlet</servlet-class>
-  </servlet>
 
-  <!-- Map the servlet to handle requests with "/view/*" -->
-  <servlet-mapping>
-    <servlet-name>ViewResolverServlet</servlet-name>
-    <url-pattern>/view/*</url-pattern>
-  </servlet-mapping>
 
 </web-app>

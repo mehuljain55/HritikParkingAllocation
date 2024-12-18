@@ -22,15 +22,16 @@ public class UserController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("Login Access");
         int userId = Integer.parseInt(request.getParameter("userId"));
         String password = request.getParameter("password");
         User user = userService.validateUser(userId, password);
 
         if (user != null) {
             request.setAttribute("user", user);
-            request.getRequestDispatcher("/view/Dashboard").forward(request, response);
+            request.getRequestDispatcher("/Dashboard.jsp").forward(request, response);
         } else {
-            response.sendRedirect("/view/Login");
+            response.sendRedirect("/Login.jsp");
         }
     }
 }

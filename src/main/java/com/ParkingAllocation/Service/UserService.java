@@ -73,7 +73,7 @@ public class UserService {
         try {
 
         Connection con=jdbcUtils.establishConnection();
-        String query = "SELECT user_id, name, role, password FROM users WHERE user_id = ?";
+        String query = "SELECT userId, name, role, password FROM user WHERE userId = ?";
 
         PreparedStatement stmt = con.prepareStatement(query);
         stmt.setInt(1, userId);
@@ -82,7 +82,7 @@ public class UserService {
 
         // Process result set
         if (rs.next()) {
-            user.setUserId(rs.getInt("user_id"));
+            user.setUserId(rs.getInt("userId"));
             user.setName(rs.getString("name"));
             user.setRole(rs.getString("role"));
             user.setPassword(rs.getString("password"));
