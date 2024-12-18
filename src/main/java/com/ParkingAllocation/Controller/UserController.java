@@ -22,7 +22,6 @@ public class UserController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("Login Access");
         int userId = Integer.parseInt(request.getParameter("userId"));
         String password = request.getParameter("password");
         User user = userService.validateUser(userId, password);

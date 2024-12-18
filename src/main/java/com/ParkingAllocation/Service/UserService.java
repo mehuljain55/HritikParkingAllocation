@@ -17,24 +17,18 @@ public class UserService {
         this.jdbcUtils = jdbcUtils;
     }
 
-    private String addUser(User user)
+    public String addUser(User user)
     {
         try {
 
-            int maxUserId=0;
             Connection con=jdbcUtils.establishConnection();
             Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT MAX(userId) FROM User");
-                if (resultSet.next()) {
-                    maxUserId = resultSet.getInt(1) + 1;
-                }
-            user.setUserId(maxUserId);
             String query = "INSERT INTO User (userId, name, role, password) " +
                     "VALUES (" + user.getUserId() + ", '" + user.getName() + "', '" + user.getRole() + "', '" + user.getPassword() + "')";
             PreparedStatement ps = con.prepareStatement(query);
             ps.executeUpdate();
             con.close();
-            return "User updated";
+            return "User added";
         }catch (Exception e)
         {
             e.printStackTrace();
