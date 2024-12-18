@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/user")
+@WebServlet("/user/login")
 public class UserController extends HttpServlet {
 
     private UserService userService;
@@ -20,17 +20,17 @@ public class UserController extends HttpServlet {
         this.userService = new UserService(new JdbcUtils());
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int userId = Integer.parseInt(request.getParameter("userId")); // Assuming userId is sent as a form parameter
+        int userId = Integer.parseInt(request.getParameter("userId"));
         String password = request.getParameter("password");
         User user = userService.validateUser(userId, password);
+
         if (user != null) {
             request.setAttribute("user", user);
-            request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Dashboard").forward(request, response);
         } else {
-            response.sendRedirect("Login.jsp");
+            response.sendRedirect("/view/Login");
         }
     }
 }
