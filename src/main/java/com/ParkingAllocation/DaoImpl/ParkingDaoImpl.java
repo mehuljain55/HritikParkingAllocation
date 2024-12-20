@@ -16,6 +16,34 @@ public class ParkingDaoImpl {
     private UserDaoImpl userDao;
 
 
+    public String addParking(String parkingType)
+    {
+        try{
+            Connection con=jdbcUtils.establishConnection();
+            int maxParkingId=1;
+            Statement statement=con.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT MAX(parkingId) FROM Parking");
+            if (resultSet.next()) {
+                maxParkingId = resultSet.getInt(1) + 1;
+            }
+
+            String query = "INSERT INTO Parking (parkingId, parkingType, status) " +
+                    "VALUES (?, ?, ?)";
+            PreparedStatement preparedStatement=con.prepareStatement(query);
+            preparedStatement.setInt(1, maxParkingId);
+            preparedStatement.setString(2, parkingType);
+            preparedStatement.setString(3, "Free");
+            preparedStatement.executeUpdate();
+            con.close();
+            return "Success";
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            return "Failed";
+        }
+
+    }
+
     public ParkingModel getParkingInformation(int parkingId){
         try{
        ParkingModel parkingModel=new ParkingModel();

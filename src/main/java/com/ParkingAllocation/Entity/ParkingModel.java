@@ -6,6 +6,7 @@ public class ParkingModel {
    private int parkingHistoryId;
    private String userName;
    private String status;
+   private String parkingType;
 
    public ParkingModel(int parkingId, int userId, String userName, String status) {
       this.parkingId = parkingId;
@@ -55,5 +56,13 @@ public class ParkingModel {
 
    public void setParkingHistoryId(int parkingHistoryId) {
       this.parkingHistoryId = parkingHistoryId;
+   }
+
+   public String getParkingType() {
+      return parkingType;
+   }
+
+   public void setParkingType(String parkingType) {
+      this.parkingType = parkingType;
    }
 }
