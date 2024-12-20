@@ -8,7 +8,9 @@ import com.ParkingAllocation.JDBCUtils.JdbcUtils;
 
 import java.sql.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ParkingDaoImpl {
 
@@ -138,8 +140,40 @@ public class ParkingDaoImpl {
            return "Failed";
        }
 
-
         }
+    public List<ParkingHistory> viewParkingHistory(Date startDate,Date endDate)
+    {
+        List<ParkingHistory> parkingHistoryList=new ArrayList<>();
+        try {
+            Connection conn=jdbcUtils.establishConnection();
+
+            String query = "SELECT * FROM parking_history WHERE date BETWEEN ? AND ?";
+
+         PreparedStatement preparedStatement = conn.prepareStatement(query);
+         preparedStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+         preparedStatement.setDate(2, new java.sql.Date(endDate.getTime()));
+
+             ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    ParkingHistory parkingHistory = new ParkingHistory();
+
+                    parkingHistory.setSno(resultSet.getInt("sno"));
+                    parkingHistory.setParkingSlot(resultSet.getInt("parking_slot"));
+                    parkingHistory.setEmployeeId(resultSet.getInt("employee_id"));
+                    parkingHistory.setEmployeeName(resultSet.getString("employee_name"));
+                    parkingHistory.setDate(resultSet.getDate("date"));
+                    parkingHistory.setStartTime(resultSet.getTime("start_time").toLocalTime());
+                    parkingHistory.setEndTime(resultSet.getTime("end_time").toLocalTime());
+                    parkingHistoryList.add(parkingHistory);
+                }
+                    return parkingHistoryList;
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 
