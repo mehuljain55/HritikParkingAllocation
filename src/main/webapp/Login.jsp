@@ -67,7 +67,7 @@
             </div>
         </c:if>
 
-        <form action="user/validateCredential" method="post">
+        <form action="validateCredential" method="post">
             <input type="text" class="input-field" name="userId" placeholder="User ID" required />
             <input type="password" class="input-field" name="password" placeholder="Password" required />
             <button type="submit" class="login-btn">Login</button>

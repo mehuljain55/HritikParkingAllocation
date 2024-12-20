@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/user/validateCredential")
+@WebServlet("/validateCredential")
 public class LoginServlet extends HttpServlet {
 
     private UserDaoImpl userDaoImpl;
@@ -26,12 +26,12 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         User user = userDaoImpl.validateUser(userId, password);
 
-        if (user != null && user.getRole().equals("User") ) {
+        if (user != null && user.getRole().equals("user") ) {
             request.setAttribute("user", user);
-            request.getRequestDispatcher("/Dashboard.jsp").forward(request, response);
-        }else if ( user != null && user.getRole().equals("User") ) {
+            request.getRequestDispatcher("User/Dashboard.jsp").forward(request, response);
+        }else if ( user != null && user.getRole().equals("admin") ) {
             request.setAttribute("user", user);
-            request.getRequestDispatcher("/User/Dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("Admin/Dashboard.jsp").forward(request, response);
 
 
         } else {

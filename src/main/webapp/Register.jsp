@@ -11,7 +11,7 @@
 
     <h1>Registration</h1>
 
-    <form action="user/register" method="post">
+    <form action="register" method="post">
 
         <label for="userId">UserId:</label>
                <input type="text" id="userId" name="userId" required><br><br>
