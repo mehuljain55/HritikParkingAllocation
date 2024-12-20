@@ -9,11 +9,29 @@
     <div class="container mt-5">
         <h2 class="text-center">Parking History</h2>
 
+        <!-- Form to select dates -->
+        <form action="ViewParkingHistory" method="get" class="mb-4">
+            <div class="form-row align-items-end">
+                <div class="col-md-5">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control" required>
+                </div>
+                <div class="col-md-5">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-block">Fetch Data</button>
+                </div>
+            </div>
+        </form>
+
         <!-- Display error message if any -->
         <c:if test="${not empty error}">
             <div class="alert alert-danger">${error}</div>
         </c:if>
 
+        <!-- Parking History Table -->
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -46,7 +64,7 @@
             </tbody>
         </table>
 
-        <a href="ViewParkingHistory" class="btn btn-primary">Go Back</a>
+        <a href="index.jsp" class="btn btn-secondary">Go Back</a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
