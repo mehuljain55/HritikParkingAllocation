@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/user/login")
+@WebServlet("/user/validateCredential")
 public class UserController extends HttpServlet {
 
     private UserDaoImpl userDaoImpl;
