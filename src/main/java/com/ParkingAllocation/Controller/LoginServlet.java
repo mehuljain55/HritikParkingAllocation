@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/user/validateCredential")
-public class UserController extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 
     private UserDaoImpl userDaoImpl;
 
-    public UserController() {
+    public LoginServlet() {
         this.userDaoImpl = new UserDaoImpl(new JdbcUtils());
     }
 
@@ -26,9 +26,14 @@ public class UserController extends HttpServlet {
         String password = request.getParameter("password");
         User user = userDaoImpl.validateUser(userId, password);
 
-        if (user != null) {
+        if (user != null && user.getRole().equals("User") ) {
             request.setAttribute("user", user);
             request.getRequestDispatcher("/Dashboard.jsp").forward(request, response);
+        }else if ( user != null && user.getRole().equals("User") ) {
+            request.setAttribute("user", user);
+            request.getRequestDispatcher("/User/Dashboard.jsp").forward(request, response);
+
+
         } else {
             response.sendRedirect("/Login.jsp");
         }

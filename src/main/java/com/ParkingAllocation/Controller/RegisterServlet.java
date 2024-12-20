@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/user/register")
-public class RegisterController extends HttpServlet {
+public class RegisterServlet extends HttpServlet {
 
     private UserDaoImpl userDaoImpl;
 
-    public RegisterController() {
+    public RegisterServlet() {
         this.userDaoImpl = new UserDaoImpl(new JdbcUtils());
     }
 
@@ -28,15 +28,12 @@ public class RegisterController extends HttpServlet {
         String userName = request.getParameter("userName");
         String role = request.getParameter("role");
         String password = request.getParameter("password");
-
         User user = new User();
         user.setUserId(empId);
         user.setName(userName);
         user.setRole(role);
         user.setPassword(password);
-
         String status = userDaoImpl.addUser(user);
-
         request.setAttribute("registrationStatus", status);
         request.getRequestDispatcher("/Login.jsp").forward(request, response);
     }
