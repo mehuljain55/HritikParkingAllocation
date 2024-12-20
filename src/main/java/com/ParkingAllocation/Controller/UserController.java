@@ -2,7 +2,7 @@ package com.ParkingAllocation.Controller;
 
 import com.ParkingAllocation.Entity.User;
 import com.ParkingAllocation.JDBCUtils.JdbcUtils;
-import com.ParkingAllocation.Service.UserService;
+import com.ParkingAllocation.DaoImpl.UserDaoImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,17 +14,17 @@ import java.io.IOException;
 @WebServlet("/user/login")
 public class UserController extends HttpServlet {
 
-    private UserService userService;
+    private UserDaoImpl userDaoImpl;
 
     public UserController() {
-        this.userService = new UserService(new JdbcUtils());
+        this.userDaoImpl = new UserDaoImpl(new JdbcUtils());
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int userId = Integer.parseInt(request.getParameter("userId"));
         String password = request.getParameter("password");
-        User user = userService.validateUser(userId, password);
+        User user = userDaoImpl.validateUser(userId, password);
 
         if (user != null) {
             request.setAttribute("user", user);

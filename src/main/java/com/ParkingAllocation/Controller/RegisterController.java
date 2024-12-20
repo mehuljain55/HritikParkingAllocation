@@ -2,7 +2,7 @@ package com.ParkingAllocation.Controller;
 
 import com.ParkingAllocation.Entity.User;
 import com.ParkingAllocation.JDBCUtils.JdbcUtils;
-import com.ParkingAllocation.Service.UserService;
+import com.ParkingAllocation.DaoImpl.UserDaoImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,10 +14,10 @@ import java.io.IOException;
 @WebServlet("/user/register")
 public class RegisterController extends HttpServlet {
 
-    private UserService userService;
+    private UserDaoImpl userDaoImpl;
 
     public RegisterController() {
-        this.userService = new UserService(new JdbcUtils());
+        this.userDaoImpl = new UserDaoImpl(new JdbcUtils());
     }
 
     @Override
@@ -35,7 +35,7 @@ public class RegisterController extends HttpServlet {
         user.setRole(role);
         user.setPassword(password);
 
-        String status = userService.addUser(user);
+        String status = userDaoImpl.addUser(user);
 
         request.setAttribute("registrationStatus", status);
         request.getRequestDispatcher("/Login.jsp").forward(request, response);

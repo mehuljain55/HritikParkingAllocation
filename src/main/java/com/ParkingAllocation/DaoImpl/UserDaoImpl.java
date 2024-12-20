@@ -1,5 +1,6 @@
-package com.ParkingAllocation.Service;
+package com.ParkingAllocation.DaoImpl;
 
+import com.ParkingAllocation.Dao.UserDao;
 import com.ParkingAllocation.Entity.ParkingModel;
 import com.ParkingAllocation.Entity.User;
 import com.ParkingAllocation.JDBCUtils.JdbcUtils;
@@ -9,11 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class UserService {
+public class UserDaoImpl  implements UserDao {
 
     private JdbcUtils jdbcUtils;
 
-    public UserService(JdbcUtils jdbcUtils) {
+    public UserDaoImpl(JdbcUtils jdbcUtils) {
         this.jdbcUtils = jdbcUtils;
     }
 
@@ -99,7 +100,25 @@ public class UserService {
         }
     }
 
+    public User getUserInformation(int userId){
+        try{
+            User user=new User();
+            Connection con=jdbcUtils.establishConnection();
+            PreparedStatement statement = con.prepareStatement("SELECT * FROM User WHERE userId = ?");
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
 
+                user.setUserId(resultSet.getInt("userId"));
+                user.setName(resultSet.getString("userName"));
+            }
+            con.close();
+            return user;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  null;
+        }
+    }
 
         }
 

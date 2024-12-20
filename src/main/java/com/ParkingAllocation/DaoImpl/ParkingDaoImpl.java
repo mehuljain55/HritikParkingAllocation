@@ -1,4 +1,4 @@
-package com.ParkingAllocation.Service;
+package com.ParkingAllocation.DaoImpl;
 
 
 import com.ParkingAllocation.Entity.ParkingHistory;
@@ -10,9 +10,10 @@ import java.sql.*;
 import java.time.LocalTime;
 import java.util.Date;
 
-public class ParkingService {
+public class ParkingDaoImpl {
 
     private JdbcUtils jdbcUtils;
+    private UserDaoImpl userDao;
 
 
     public ParkingModel getParkingInformation(int parkingId){
@@ -37,29 +38,10 @@ public class ParkingService {
     }
     }
 
-    public User getUserInformation(int userId){
-        try{
-            User user=new User();
-            Connection con=jdbcUtils.establishConnection();
-            PreparedStatement statement = con.prepareStatement("SELECT * FROM User WHERE userId = ?");
-            statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-
-                user.setUserId(resultSet.getInt("userId"));
-                user.setName(resultSet.getString("userName"));
-            }
-            con.close();
-            return user;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return  null;
-        }
-    }
 
     public String checkIn(int userId,int parkingId) throws SQLException {
         ParkingModel parkingModel=getParkingInformation(parkingId);
-        User user=getUserInformation(userId);
+        User user=userDao.getUserInformation(userId);
         if (parkingModel.getStatus().equals("Free"))
         {
             parkingModel.setUserId(userId);
