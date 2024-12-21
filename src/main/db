@@ -1,20 +1,27 @@
 -- Table for ParkingModel
-CREATE TABLE ParkingModel (
-    parkingId INT AUTO_INCREMENT PRIMARY KEY,
-    userId INT NOT NULL,
-    parkingHistoryId INT NOT NULL,
-    userName VARCHAR(100) NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    parkingType VARCHAR(50) NOT NULL
+CREATE TABLE Parking (
+    parkingId INT ,
+    userId INT ,
+    parkingHistoryId INT,
+    userName VARCHAR(100) ,
+    status VARCHAR(50) ,
+    parkingType VARCHAR(50)
 );
 
 -- Table for ParkingHistory
 CREATE TABLE ParkingHistory (
-    sno INT AUTO_INCREMENT PRIMARY KEY,
-    parkingSlot INT NOT NULL,
-    employeeId INT NOT NULL,
-    employeeName VARCHAR(100) NOT NULL,
-    date DATE NOT NULL,
-    startTime TIME NOT NULL,
-    endTime TIME NOT NULL
+    sno INT ,
+    parkingSlot INT ,
+    employeeId INT,
+    employeeName VARCHAR(100) ,
+    date DATE ,
+    startTime TIME,
+    endTime TIME
+);
+
+CREATE TABLE users (
+    userId INT PRIMARY KEY  ,
+    name VARCHAR(100) ,
+    role VARCHAR(50) ,
+    password VARCHAR(255)
 );

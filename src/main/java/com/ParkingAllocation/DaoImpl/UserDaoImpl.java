@@ -14,8 +14,8 @@ public class UserDaoImpl  implements UserDao {
 
     private JdbcUtils jdbcUtils;
 
-    public UserDaoImpl(JdbcUtils jdbcUtils) {
-        this.jdbcUtils = jdbcUtils;
+    public UserDaoImpl() {
+        this.jdbcUtils =new JdbcUtils();
     }
 
     public String addUser(User user)
@@ -40,7 +40,6 @@ public class UserDaoImpl  implements UserDao {
     public String addParkingSlot(ParkingModel parkingModel)
     {
         try {
-
             int maxParkingId=0;
             Connection con=jdbcUtils.establishConnection();
             Statement statement = con.createStatement();

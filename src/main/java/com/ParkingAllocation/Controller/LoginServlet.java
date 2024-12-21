@@ -17,7 +17,7 @@ public class LoginServlet extends HttpServlet {
     private UserDaoImpl userDaoImpl;
 
     public LoginServlet() {
-        this.userDaoImpl = new UserDaoImpl(new JdbcUtils());
+
     }
 
     @Override
@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
         User user = userDaoImpl.validateUser(userId, password);
 
         if (user != null && user.getRole().equals("user") ) {
-            request.setAttribute("user", user);
+            request.getSession().setAttribute("user", user);
             request.getRequestDispatcher("User/Dashboard.jsp").forward(request, response);
         }else if ( user != null && user.getRole().equals("admin") ) {
             request.setAttribute("user", user);

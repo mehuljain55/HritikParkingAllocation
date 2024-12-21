@@ -17,7 +17,6 @@ public class RegisterServlet extends HttpServlet {
     private UserDaoImpl userDaoImpl;
 
     public RegisterServlet() {
-        this.userDaoImpl = new UserDaoImpl(new JdbcUtils());
     }
 
     @Override

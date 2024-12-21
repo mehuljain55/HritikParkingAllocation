@@ -9,6 +9,7 @@ public class ParkingHistory {
     private int employeeId;
     private String employeeName;
     private Date date;
+    private String vechineNo;
     private LocalTime startTime;
     private LocalTime endTime;
 
@@ -78,5 +79,13 @@ public class ParkingHistory {
 
     public void setParkingSlot(int parkingSlot) {
         this.parkingSlot = parkingSlot;
+    }
+
+    public String getVechineNo() {
+        return vechineNo;
+    }
+
+    public void setVechineNo(String vechineNo) {
+        this.vechineNo = vechineNo;
     }
 }

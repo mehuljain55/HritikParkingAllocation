@@ -17,6 +17,10 @@ public class ParkingDaoImpl {
     private JdbcUtils jdbcUtils;
     private UserDaoImpl userDao;
 
+    public ParkingDaoImpl() {
+        this.jdbcUtils = new JdbcUtils();
+        this.userDao = new UserDaoImpl();
+    }
 
     public String addParking(String parkingType)
     {
@@ -175,7 +179,32 @@ public class ParkingDaoImpl {
         }
     }
 
+    public List<ParkingModel> getAllParkingSlot() {
+        List<ParkingModel> parkingList = new ArrayList<>();
 
+
+        try{
+             Connection con=jdbcUtils.establishConnection();
+             String query = "SELECT parkingId, userId, parkingHistoryId, userName, status, parkingType FROM Parking";
+             Statement statement = con.createStatement();
+             ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                ParkingModel parking = new ParkingModel();
+                parking.setParkingId(resultSet.getInt("parkingId"));
+                parking.setUserId(resultSet.getInt("userId"));
+                parking.setParkingHistoryId(resultSet.getInt("parkingHistoryId"));
+                parking.setUserName(resultSet.getString("userName"));
+                parking.setStatus(resultSet.getString("status"));
+                parking.setParkingType(resultSet.getString("parkingType"));
+                parkingList.add(parking);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return parkingList;
+    }
 
 
 }
