@@ -73,12 +73,13 @@ public class ParkingDaoImpl {
     }
 
 
-    public String checkIn(int userId,int parkingId) throws SQLException {
+    public String checkIn(int userId,int parkingId,String vechineNo) throws SQLException {
         ParkingModel parkingModel=getParkingInformation(parkingId);
         User user=userDao.getUserInformation(userId);
         if (parkingModel.getStatus().equals("Free"))
         {
             parkingModel.setUserId(userId);
+            parkingModel.setVechileNo(vechineNo);
             Connection con=jdbcUtils.establishConnection();
             PreparedStatement updateStatement;
             int maxParkingHistoryId=0;
@@ -96,8 +97,8 @@ public class ParkingDaoImpl {
             parkingHistory.setStartTime(LocalTime.now());
             parkingHistory.setParkingSlot(parkingId);
 
-            String sql = "INSERT INTO ParkingHistory (employeeId, employeeName, date, startTime) " +
-                    "VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO ParkingHistory (employeeId, employeeName, date, startTime,vechileNo) " +
+                    "VALUES (?, ?, ?, ?, ?)";
 
             updateStatement = con.prepareStatement(sql);
             updateStatement.setInt(1, parkingHistory.getEmployeeId());
@@ -110,6 +111,7 @@ public class ParkingDaoImpl {
             updateStatement.setString(2,user.getName());
             updateStatement.setInt(3, parkingId);
             updateStatement.setInt(4,maxParkingHistoryId);
+            updateStatement.setString(5,vechineNo);
             return "success";
         }
         else {
@@ -121,7 +123,7 @@ public class ParkingDaoImpl {
        try{
            Connection con=jdbcUtils.establishConnection();
         PreparedStatement updateParkingStatement = con.prepareStatement(
-                "UPDATE Parking SET  status = 'Free', userId = ?, userName = ?, parkingHistoryId=? WHERE parkingId = ?");
+                "UPDATE Parking SET  status = 'Free', userId = ?, userName = ?, parkingHistoryId=?, vechileNo=? WHERE parkingId = ?");
         PreparedStatement updateHistoryStatement = con.prepareStatement(
                 "UPDATE ParkingHistory SET endTime = ? WHERE parkingHistoryId = ?");
 
@@ -130,6 +132,7 @@ public class ParkingDaoImpl {
                updateParkingStatement.setString(2, "");
                updateParkingStatement.setInt(3, 0);
                updateParkingStatement.setInt(4, parkingId);
+           updateParkingStatement.setString(5, "");
                updateParkingStatement.executeUpdate();
 
                // Update ParkingHistory table

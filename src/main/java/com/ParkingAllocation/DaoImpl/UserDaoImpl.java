@@ -24,7 +24,7 @@ public class UserDaoImpl  implements UserDao {
 
             Connection con=jdbcUtils.establishConnection();
             Statement statement = con.createStatement();
-            String query = "INSERT INTO User (userId, name, role, password) " +
+            String query = "INSERT INTO Users (userId, name, role, password) " +
                     "VALUES (" + user.getUserId() + ", '" + user.getName() + "', '" + user.getRole() + "', '" + user.getPassword() + "')";
             PreparedStatement ps = con.prepareStatement(query);
             ps.executeUpdate();
@@ -67,7 +67,7 @@ public class UserDaoImpl  implements UserDao {
         try {
 
         Connection con=jdbcUtils.establishConnection();
-        String query = "SELECT userId, name, role, password FROM user WHERE userId = ?";
+        String query = "SELECT userId, name, role, password FROM users WHERE userId = ?";
 
         PreparedStatement stmt = con.prepareStatement(query);
         stmt.setInt(1, userId);
@@ -103,7 +103,7 @@ public class UserDaoImpl  implements UserDao {
         try{
             User user=new User();
             Connection con=jdbcUtils.establishConnection();
-            PreparedStatement statement = con.prepareStatement("SELECT * FROM User WHERE userId = ?");
+            PreparedStatement statement = con.prepareStatement("SELECT * FROM Users WHERE userId = ?");
             statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {

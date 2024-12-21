@@ -17,18 +17,19 @@ public class LoginServlet extends HttpServlet {
     private UserDaoImpl userDaoImpl;
 
     public LoginServlet() {
-
+        this.userDaoImpl = new UserDaoImpl();
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("Validate Login");
         int userId = Integer.parseInt(request.getParameter("userId"));
         String password = request.getParameter("password");
         User user = userDaoImpl.validateUser(userId, password);
 
         if (user != null && user.getRole().equals("user") ) {
             request.getSession().setAttribute("user", user);
-            request.getRequestDispatcher("User/Dashboard.jsp").forward(request, response);
+            response.sendRedirect("/user/dashboard");
         }else if ( user != null && user.getRole().equals("admin") ) {
             request.setAttribute("user", user);
             request.getRequestDispatcher("Admin/Dashboard.jsp").forward(request, response);

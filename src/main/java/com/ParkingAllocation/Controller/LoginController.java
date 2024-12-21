@@ -12,7 +12,7 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        System.out.println("Login");
         response.sendRedirect("Login.jsp");  // Use forward slash (/) for context root
     }
 }
