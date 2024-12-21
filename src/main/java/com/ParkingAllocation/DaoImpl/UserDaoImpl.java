@@ -109,7 +109,7 @@ public class UserDaoImpl  implements UserDao {
             if (resultSet.next()) {
 
                 user.setUserId(resultSet.getInt("userId"));
-                user.setName(resultSet.getString("userName"));
+                user.setName(resultSet.getString("name"));
             }
             con.close();
             return user;

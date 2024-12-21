@@ -11,29 +11,28 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 
-@WebServlet("/user/booking")
-public class BookingServlet extends HttpServlet {
+@WebServlet("/user/checkOut")
+public class CheckOut extends HttpServlet {
 
 
     private ParkingDaoImpl parkingDaoImpl;
 
-    public BookingServlet() {
+    public CheckOut() {
         this.parkingDaoImpl = new ParkingDaoImpl();
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("Parking controller");
 
-        String vechileNo=request.getParameter("vechileNo");
         int parkingId=Integer.parseInt(request.getParameter("parkingId"));
-
         User user = (User) request.getSession().getAttribute("user");
 
         if (user != null) {
             try {
-                String status=parkingDaoImpl.checkIn(user.getUserId(),parkingId,vechileNo);
+                String status=parkingDaoImpl.checkOut(parkingId);
                 request.setAttribute("status",status);
-                request.getRequestDispatcher("/user/dashboard").forward(request, response);
+                response.sendRedirect("/user/dashboard");
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);

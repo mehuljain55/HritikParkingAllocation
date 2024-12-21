@@ -8,6 +8,7 @@ import com.ParkingAllocation.JDBCUtils.JdbcUtils;
 
 import java.sql.*;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,13 +74,14 @@ public class ParkingDaoImpl {
     }
 
 
-    public String checkIn(int userId,int parkingId,String vechineNo) throws SQLException {
-        ParkingModel parkingModel=getParkingInformation(parkingId);
+    public String checkIn(int userId,int parkingSlot,String vehicleNo) throws SQLException {
+        System.out.println("Check In");
+        ParkingModel parkingModel=getParkingInformation(parkingSlot);
         User user=userDao.getUserInformation(userId);
         if (parkingModel.getStatus().equals("Free"))
         {
             parkingModel.setUserId(userId);
-            parkingModel.setVechileNo(vechineNo);
+            parkingModel.setVehicleNo(vehicleNo);
             Connection con=jdbcUtils.establishConnection();
             PreparedStatement updateStatement;
             int maxParkingHistoryId=0;
@@ -91,27 +93,35 @@ public class ParkingDaoImpl {
 
             ParkingHistory parkingHistory=new ParkingHistory();
             parkingHistory.setSno(maxParkingHistoryId);
+            parkingHistory.setParkingSlot(parkingSlot);
             parkingHistory.setDate(new Date());
             parkingHistory.setEmployeeId(userId);
             parkingHistory.setEmployeeName(user.getName());
             parkingHistory.setStartTime(LocalTime.now());
-            parkingHistory.setParkingSlot(parkingId);
+            parkingHistory.setParkingSlot(parkingSlot);
 
-            String sql = "INSERT INTO ParkingHistory (employeeId, employeeName, date, startTime,vechileNo) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO ParkingHistory (sno, parkingSlot, employeeId, employeeName, date, startTime, vehicleNo) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             updateStatement = con.prepareStatement(sql);
-            updateStatement.setInt(1, parkingHistory.getEmployeeId());
-            updateStatement.setString(2, parkingHistory.getEmployeeName());
-            updateStatement.setDate(3, new java.sql.Date(parkingHistory.getDate().getTime()));
-            updateStatement.setTime(4, java.sql.Time.valueOf(parkingHistory.getStartTime()));
+            updateStatement.setInt(1, maxParkingHistoryId);
+            updateStatement.setInt(2, parkingHistory.getParkingSlot());
+
+            updateStatement.setInt(3, parkingHistory.getEmployeeId());
+            updateStatement.setString(4, parkingHistory.getEmployeeName());
+            updateStatement.setDate(5, new java.sql.Date(parkingHistory.getDate().getTime()));
+            updateStatement.setTime(6, java.sql.Time.valueOf(parkingHistory.getStartTime()));
+            updateStatement.setString(7,vehicleNo);
             updateStatement.executeUpdate();
-            updateStatement = con.prepareStatement("UPDATE Parking SET userId = ?, status = 'Occupied',userName=?, parkingHistoryId=? WHERE parkingId = ?");
+            updateStatement = con.prepareStatement("UPDATE Parking SET userId = ?, status = 'Occupied', userName=?, parkingHistoryId=?, vehicleNo=? WHERE parkingId = ?");
             updateStatement.setInt(1, userId);
             updateStatement.setString(2,user.getName());
-            updateStatement.setInt(3, parkingId);
-            updateStatement.setInt(4,maxParkingHistoryId);
-            updateStatement.setString(5,vechineNo);
+            updateStatement.setInt(3, maxParkingHistoryId);
+            updateStatement.setString(4,vehicleNo);
+            updateStatement.setInt(5,parkingSlot);
+            updateStatement.executeUpdate();
+            System.out.println("Parked");
+
             return "success";
         }
         else {
@@ -119,27 +129,20 @@ public class ParkingDaoImpl {
         }
     }
 
-    public String checkOut(int userId,int parkingId,int parkingHistoryId) throws SQLException {
+    public String checkOut(int parkingId) throws SQLException {
        try{
            Connection con=jdbcUtils.establishConnection();
-        PreparedStatement updateParkingStatement = con.prepareStatement(
-                "UPDATE Parking SET  status = 'Free', userId = ?, userName = ?, parkingHistoryId=?, vechileNo=? WHERE parkingId = ?");
-        PreparedStatement updateHistoryStatement = con.prepareStatement(
-                "UPDATE ParkingHistory SET endTime = ? WHERE parkingHistoryId = ?");
+            ParkingModel parkingModel=getParkingInformation(parkingId);
 
-               // Update Parking table
-               updateParkingStatement.setInt(1, 0);
-               updateParkingStatement.setString(2, "");
-               updateParkingStatement.setInt(3, 0);
-               updateParkingStatement.setInt(4, parkingId);
-           updateParkingStatement.setString(5, "");
-               updateParkingStatement.executeUpdate();
+           PreparedStatement updateParkingStatement = con.prepareStatement("UPDATE Parking SET  status = 'Free', userId = NULL, userName = NULL, parkingHistoryId=NULL, vehicleNo=NULL WHERE parkingId = ?");
+           updateParkingStatement.setInt(1, parkingId);
+           updateParkingStatement.executeUpdate();
 
-               // Update ParkingHistory table
-               updateHistoryStatement.setTime(1, java.sql.Time.valueOf(LocalTime.now()));
-               updateHistoryStatement.setInt(2, parkingHistoryId);
-               updateHistoryStatement.executeUpdate();
-               con.close();
+           PreparedStatement updateHistoryStatement = con.prepareStatement("UPDATE ParkingHistory SET endTime = ? WHERE sno = ?");
+           updateHistoryStatement.setTime(1, java.sql.Time.valueOf(LocalTime.now()));
+           updateHistoryStatement.setInt(2, parkingModel.getParkingHistoryId());
+           updateHistoryStatement.executeUpdate();
+           con.close();
                return "success";
        }catch (Exception e)
        {
@@ -209,8 +212,39 @@ public class ParkingDaoImpl {
         return parkingList;
     }
 
+    public ParkingHistory getParkingHistory(int parkingHistoryId) {
+        ParkingHistory parkingHistory = null;
 
+
+
+            try{
+                Connection con=jdbcUtils.establishConnection();
+                String sql = "SELECT * FROM ParkingHistory WHERE sno = ?";
+                PreparedStatement preparedStatement = con.prepareStatement(sql);
+
+                preparedStatement.setInt(1, parkingHistoryId);
+
+          ResultSet rs = preparedStatement.executeQuery();
+                while (rs.next()) {
+                    parkingHistory = new ParkingHistory();
+                    parkingHistory.setSno(rs.getInt("sno"));
+                    parkingHistory.setParkingSlot(rs.getInt("parkingSlot"));
+                    parkingHistory.setEmployeeId(rs.getInt("employeeId"));
+                    parkingHistory.setEmployeeName(rs.getString("employeeName"));
+                    parkingHistory.setDate(rs.getDate("date"));
+                    parkingHistory.setVehicleNo(rs.getString("vehicleNo"));
+                }
+
+            } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return parkingHistory;
+    }
 }
+
+
+
 
 
 

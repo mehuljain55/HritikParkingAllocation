@@ -26,13 +26,11 @@ public class LoginServlet extends HttpServlet {
         int userId = Integer.parseInt(request.getParameter("userId"));
         String password = request.getParameter("password");
         User user = userDaoImpl.validateUser(userId, password);
-
+        request.getSession().setAttribute("user", user);
         if (user != null && user.getRole().equals("user") ) {
-            request.getSession().setAttribute("user", user);
             response.sendRedirect("/user/dashboard");
         }else if ( user != null && user.getRole().equals("admin") ) {
-            request.setAttribute("user", user);
-            request.getRequestDispatcher("Admin/Dashboard.jsp").forward(request, response);
+            response.sendRedirect("/admin/dashboard");
 
 
         } else {

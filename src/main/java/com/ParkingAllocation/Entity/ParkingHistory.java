@@ -9,7 +9,7 @@ public class ParkingHistory {
     private int employeeId;
     private String employeeName;
     private Date date;
-    private String vechineNo;
+    private String vehicleNo;
     private LocalTime startTime;
     private LocalTime endTime;
 
@@ -81,11 +81,11 @@ public class ParkingHistory {
         this.parkingSlot = parkingSlot;
     }
 
-    public String getVechineNo() {
-        return vechineNo;
+    public String getVehicleNo() {
+        return vehicleNo;
     }
 
-    public void setVechineNo(String vechineNo) {
-        this.vechineNo = vechineNo;
+    public void setVehicleNo(String vehicleNo) {
+        this.vehicleNo = vehicleNo;
     }
 }

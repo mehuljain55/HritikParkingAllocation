@@ -42,7 +42,7 @@
             font-size: 0.9rem;
             cursor: pointer;
             transition: transform 0.2s;
-            max-width:150px
+            max-width:150px;
         }
 
         .parking-slot:hover {
@@ -61,6 +61,48 @@
 
         .parking-slot div {
             margin: 2px 0;
+        }
+
+        /* Modal Style */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
         }
 
         @media (max-width: 768px) {
@@ -105,15 +147,30 @@
             <c:forEach var="parking" items="${parking}">
                 <c:if test="${parking.parkingType == 'Bike'}">
                     <div class="col">
-                        <div class="parking-slot <c:choose><c:when test="${parking.status == 'Free'}">free</c:when><c:otherwise>occupied</c:otherwise></c:choose>"
-                            onclick="handleParkingClick('${parking.parkingId}', '${parking.status}', '${parking.userName}')">
-                            <div>Slot: ${parking.parkingId}</div>
-                            <div>Emp Id: ${parking.userId}</div>
-                            <div>Name: ${parking.userName}</div>
-                            <div>Vehicle No: ${parking.vechileNo}</div>
+                        <c:choose>
+                            <c:when test="${parking.status == 'Free'}">
+                                <!-- Free Slot: Show form to book vehicle -->
+                                <div class="parking-slot free" onclick="openModal('${parking.parkingId}')">
+                                    <div>Slot: ${parking.parkingId}</div>
+                                    <div>Status: ${parking.status}</div>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="parking-slot occupied">
+                                    <div>Slot: ${parking.parkingId}</div>
+                                                  <div>Status: ${parking.status}</div>
+                                                  <div>Employee Id: ${parking.userId}</div>
+                                                  <div>Employee Name: ${parking.userName}</div>
 
-                            <div>Status: ${parking.status}</div>
-                        </div>
+                                      <c:if test="${parking.userId == sessionScope.user.userId}">
+                                                                   <form action="/user/checkOut" method="POST">
+                                                                       <input type="hidden" name="parkingId" value="${parking.parkingId}">
+                                                                       <button type="submit" class="btn btn-danger mt-2">Checkout</button>
+                                                                   </form>
+                                                               </c:if>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </c:if>
             </c:forEach>
@@ -125,13 +182,32 @@
             <c:forEach var="parking" items="${parking}">
                 <c:if test="${parking.parkingType == 'Car'}">
                     <div class="col">
-                        <div class="parking-slot <c:choose><c:when test="${parking.status == 'Free'}">free</c:when><c:otherwise>occupied</c:otherwise></c:choose>"
-                            onclick="handleParkingClick('${parking.parkingId}', '${parking.status}', '${parking.userName}')">
-                            <div>Slot: ${parking.parkingId}</div>
-                            <div>Emp Id: ${parking.userId}</div>
-                            <div>Name: ${parking.userName}</div>
-                            <div>Status: ${parking.status}</div>
-                        </div>
+                        <c:choose>
+                            <c:when test="${parking.status == 'Free'}">
+                                <!-- Free Slot: Show form to book vehicle -->
+                                <div class="parking-slot free" onclick="openModal('${parking.parkingId}')">
+                                    <div>Slot: ${parking.parkingId}</div>
+                                    <div>Status: ${parking.status}</div>
+                                </div>
+                            </c:when>
+       <c:otherwise>
+           <div class="parking-slot occupied">
+               <div>Slot: ${parking.parkingId}</div>
+               <div>Status: ${parking.status}</div>
+               <div>Employee Id: ${parking.userId}</div>
+               <div>Employee Name: ${parking.userName}</div>
+
+               <!-- Show Checkout Button if the current user occupies the parking spot -->
+                <c:if test="${parking.userId == sessionScope.user.userId}">
+                               <form action="/user/checkOut" method="POST">
+                                   <input type="hidden" name="parkingId" value="${parking.parkingId}">
+                                   <button type="submit" class="btn btn-danger mt-2">Checkout</button>
+                               </form>
+                           </c:if>
+           </div>
+       </c:otherwise>
+
+                        </c:choose>
                     </div>
                 </c:if>
             </c:forEach>
@@ -139,21 +215,33 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Modal (Popup) -->
+<div id="parkingModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h4>Enter Vehicle No to Book</h4>
+        <form action="/user/checkIn" method="POST">
+            <input type="hidden" id="parkingIdInput" name="parkingId">
+            <label for="vehicleNo">Vehicle No:</label>
+            <input type="text" id="vehicleNo" name="vehicleNo" required>
+            <div class="mt-2">
+                <button type="submit" class="btn btn-primary">Book</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-    function updateDateTime() {
-        const currentDateTime = new Date().toLocaleString();
-        document.getElementById("currentDateTime").textContent = currentDateTime;
+    // Function to open the modal and set the parking slot id
+    function openModal(parkingId) {
+        document.getElementById('parkingModal').style.display = 'block';
+        document.getElementById('parkingIdInput').value = parkingId;
     }
 
-    setInterval(updateDateTime, 1000);
-
-    function handleParkingClick(parkingId, status, userName) {
-        if (status === "Free") {
-            alert('Parking slot ' + parkingId + ' is available. Proceed to park.');
-        } else {
-            alert('This slot is occupied by ' + userName);
-        }
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById('parkingModal').style.display = 'none';
     }
 </script>
 
